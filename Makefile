@@ -11,6 +11,9 @@ GO_FILES := $(shell find . -type f -name '*.go')
 .PHONY: all
 all: ${BIN_DIR}/${EXECUTABLE}
 
+.PHONY: wire
+wire: app/service/wire_gen.go app/repository/wire_gen.go
+
 # Bind json-schema files to the source
 ${JSON_SCHEMA_DIR}/bindata.go: $(wildcard ${JSON_SCHEMA_DIR}/*.json)
 	go-bindata -o $@ -prefix ${JSON_SCHEMA_DIR} -pkg jsonschema $^
