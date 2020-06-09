@@ -24,7 +24,7 @@ Packages used:
 
 + router: chi & render
 + logger: zap
-+ database: pq, sqlx & go-migrate
++ database: pq, sqlx
 + dependency injection: wire
 + static file injection: go-bindata
 + command line tool: cobra
