@@ -22,8 +22,10 @@ func init() {
 	viper.SetDefault("profiler.port", "3001")
 
 	// Server Configuration
+	viper.SetDefault("server.network", "tcp")
 	viper.SetDefault("server.host", "127.0.0.1")
 	viper.SetDefault("server.port", "3000")
+	viper.SetDefault("server.socket_path", "/tmp/golang_api.sock") // used if server.network=unix
 	viper.SetDefault("server.log_requests", true)
 	viper.SetDefault("server.profiler_enabled", false)
 	viper.SetDefault("server.profiler_path", "/debug")

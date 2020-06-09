@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"github.com/spf13/cobra"
@@ -23,10 +24,23 @@ func init() {
 				os.Exit(1)
 			}
 
-			http.ListenAndServe(
-				fmt.Sprintf("%s:%d", viper.GetString("server.host"), viper.GetInt("server.port")),
-				router,
-			)
+			network := viper.GetString("server.network")
+			var listener net.Listener
+			 if network == "tcp" {
+				listener, err = net.Listen("tcp", fmt.Sprintf("%s:%d", viper.GetString("server.host"), viper.GetInt("server.port")))
+				if err != nil {
+					log.Printf("Could not register the TCP listener:\n\n    %s\n\n", err)
+					os.Exit(1)
+				}
+			} else if network == "unix" {
+				listener, err = net.Listen("unix", viper.GetString("server.socket_path"))
+				if err != nil {
+					log.Printf("Could not register the unix socket listener:\n\n    %s\n\n", err)
+					os.Exit(1)
+				}
+			}
+
+			http.Serve(listener, router)
 		},
 	})
 }
