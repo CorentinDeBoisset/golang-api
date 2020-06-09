@@ -20,7 +20,7 @@ type Connection struct {
 func ProvideConnection(logger *Logger) (*Connection, error) {
 	dbName := strings.ReplaceAll(viper.GetString("storage.database"), "'", "\\'")
 	connStr := fmt.Sprintf(
-		"user='%s' password='%s' host='%s' port=%d dbname='%s'",
+		"user='%s' password='%s' host='%s' port=%d dbname='%s' sslmode=disable",
 		strings.ReplaceAll(viper.GetString("storage.username"), "'", "\\'"),
 		strings.ReplaceAll(viper.GetString("storage.password"), "'", "\\'"),
 		strings.ReplaceAll(viper.GetString("storage.host"), "'", "\\'"),
@@ -30,7 +30,13 @@ func ProvideConnection(logger *Logger) (*Connection, error) {
 
 	db, err := sqlx.Connect("postgres", connStr)
 	if err != nil {
-		return nil, errors.WithMessage(err, "Could not connect to the database")
+		return nil, errors.WithMessage(err, "The connection to the database failed.")
+	}
+
+	// Test we can ping the database
+	err = db.Ping()
+	if err != nil {
+		return nil, errors.WithMessage(err, "The database was reached but is unresponsive.")
 	}
 
 	// TODO debug-log the successful connection
